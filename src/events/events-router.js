@@ -6,7 +6,9 @@ const uuid = require("uuid/v4");
 const eventId = uuid();
 const events = [
   {
+    eventId: "1",
     title: "Super Soup Kitchen",
+    description: "",
     date: "2019-10-20",
     city: "Phoenix",
     state: "AZ",
@@ -14,7 +16,9 @@ const events = [
     link: ""
   },
   {
+    eventId: "2",
     title: "Planting Trees for the Bees",
+    description: "",
     date: "2019-10-31",
     city: "Tempe",
     state: "AZ",
@@ -29,7 +33,15 @@ eventsRouter
     res.status(200).send(events);
   })
   .post(bodyParser, (req, res) => {
-    const { title, date, city, state, org = false, link = false } = req.body;
+    const {
+      title,
+      description = false,
+      date,
+      city,
+      state,
+      org = false,
+      link = false
+    } = req.body;
 
     if (!title || !date || !city || !state) {
       return res.status(400).send("Required fields missing");
@@ -38,6 +50,7 @@ eventsRouter
     const event = {
       eventId,
       title,
+      description,
       date,
       city,
       state,
@@ -47,7 +60,7 @@ eventsRouter
 
     events.push(event);
 
-    res.status(201).send("Event added");
+    res.status(201).json(event);
   });
 
 eventsRouter
