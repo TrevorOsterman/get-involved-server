@@ -76,11 +76,17 @@ eventsRouter
       .end();
   })
   .patch(bodyParser, (req, res) => {
-    const eventId = req.params;
-    const { title, date, city, state, description, org, link } = req.body;
-    const oppEdit = events.find(ev => {
-      ev.eventId === eventId;
-    });
+    const { eventId } = req.params;
+    const update = req.body;
+    const index = events.findIndex(u => u.eventId === eventId);
+    if (index === -1) {
+      return res.status(404).send("Event not found");
+    }
+
+    events.splice(index, 1);
+    events.push(update);
+
+    res.send(`Event updated`);
   })
   .delete((req, res) => {
     const { eventId } = req.params;
