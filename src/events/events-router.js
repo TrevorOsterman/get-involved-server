@@ -66,7 +66,21 @@ eventsRouter
 eventsRouter
   .route("/api/events/:eventId")
   .get((req, res) => {
-    res.send("Not implemented yet");
+    const { eventId } = req.params;
+
+    const opp = events.find(u => u.eventId === eventId);
+
+    res
+      .send(opp)
+      .status(204)
+      .end();
+  })
+  .patch(bodyParser, (req, res) => {
+    const eventId = req.params;
+    const { title, date, city, state, description, org, link } = req.body;
+    const oppEdit = events.find(ev => {
+      ev.eventId === eventId;
+    });
   })
   .delete((req, res) => {
     const { eventId } = req.params;
