@@ -72,7 +72,7 @@ eventsRouter
 
     res
       .send(opp)
-      .status(204)
+      .status(200)
       .end();
   })
   .patch(bodyParser, (req, res) => {
@@ -86,7 +86,7 @@ eventsRouter
     events.splice(index, 1);
     events.push(update);
 
-    res.send(`Event updated`);
+    res.status(201).send(`Event updated`);
   })
   .delete((req, res) => {
     const { eventId } = req.params;
@@ -97,7 +97,10 @@ eventsRouter
     }
 
     events.splice(index, 1);
-    res.status(204).end();
+    res
+      .status(204)
+      .send("Event deleted")
+      .end();
   });
 
 module.exports = eventsRouter;
