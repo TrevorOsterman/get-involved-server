@@ -2,105 +2,80 @@ const express = require("express");
 const eventsRouter = express.Router();
 const bodyParser = express.json();
 const uuid = require("uuid/v4");
-
-const eventId = uuid();
-const events = [
-  {
-    eventId: "1",
-    title: "Super Soup Kitchen",
-    description: "",
-    date: "2019-10-20",
-    city: "Phoenix",
-    state: "AZ",
-    org: "Helping Hands",
-    link: ""
-  },
-  {
-    eventId: "2",
-    title: "Planting Trees for the Bees",
-    description: "",
-    date: "2019-10-31",
-    city: "Tempe",
-    state: "AZ",
-    org: "Save the Bees",
-    link: "https://youtu.be/EVCrmXW6-Pk"
-  }
-];
+const EventsService = require("./events-service.js");
 
 eventsRouter
   .route("/api/events")
-  .get((req, res) => {
-    res.status(200).send(events);
+  .get((req, res, next) => {
+    const knex = req.app.get("db");
+    EventsService.getAllEvents(knex).then(events => {
+      res.status(200).json(events);
+    });
   })
-  .post(bodyParser, (req, res) => {
+  .post(bodyParser, (req, res, next) => {
     const {
       title,
-      description = false,
-      date,
+      description,
+      event_date,
       city,
       state,
-      org = false,
+      organization = false,
       link = false
     } = req.body;
 
-    if (!title || !date || !city || !state) {
+    if (!title || !event_date || !city || !state || !description) {
       return res.status(400).send("Required fields missing");
     }
 
-    const event = {
-      eventId,
+    const newEvent = {
       title,
       description,
-      date,
+      event_date,
       city,
       state,
-      org,
+      organization,
       link
     };
 
-    events.push(event);
-
-    res.status(201).json(event);
+    EventsService.createEvent(req.app.get("db"), newEvent).then(newEvent => {
+      res.status(201).json(newEvent);
+    });
   });
 
 eventsRouter
   .route("/api/events/:eventId")
-  .get((req, res) => {
-    const { eventId } = req.params;
-
-    const opp = events.find(u => u.eventId === eventId);
-
-    res
-      .send(opp)
-      .status(200)
-      .end();
+  .all((req, res, next) => {
+    EventsService.getById(req.app.get("db"), req.params.eventId)
+      .then(ev => {
+        if (!ev) {
+          return res
+            .status(404)
+            .json({ error: { message: `Event no existo` } });
+        }
+        res.ev = ev;
+        next();
+      })
+      .catch(next);
   })
-  .patch(bodyParser, (req, res) => {
+  .get((req, res, next) => {
+    res.json(res.ev);
+  })
+  .delete((req, res, next) => {
+    EventsService.deleteEvent(req.app.get("db"), req.params.eventId)
+      .then(numRowsAffected => {
+        res.status(204).end();
+      })
+      .catch(next);
+  })
+  .patch(bodyParser, (req, res, next) => {
     const { eventId } = req.params;
     const update = req.body;
-    const index = events.findIndex(u => u.eventId === eventId);
-    if (index === -1) {
-      return res.status(404).send("Event not found");
-    }
-
-    events.splice(index, 1);
-    events.push(update);
-
-    res.status(201).send(`Event updated`);
-  })
-  .delete((req, res) => {
-    const { eventId } = req.params;
-
-    const index = events.findIndex(u => u.eventId === eventId);
-    if (index === -1) {
-      return res.status(404).send("Event not found");
-    }
-
-    events.splice(index, 1);
-    res
-      .status(204)
-      .send("Event deleted")
-      .end();
+    console.log(update);
+    EventsService.updateEvent(
+      req.app.get("db"),
+      req.params.eventId,
+      update
+    ).then(res.status(201).send(`Event updated`));
   });
 
 module.exports = eventsRouter;
