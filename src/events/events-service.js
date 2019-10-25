@@ -1,6 +1,9 @@
 const EventsService = {
   getAllEvents(knex) {
-    return knex.select("*").from("events");
+    return knex
+      .select("*")
+      .from("events")
+      .orderBy("event_date", "desc");
   },
 
   createEvent(knex, newEvent) {
