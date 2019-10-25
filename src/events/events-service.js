@@ -3,7 +3,7 @@ const EventsService = {
     return knex
       .select("*")
       .from("events")
-      .orderBy("event_date", "desc");
+      .orderBy("event_date", "asc");
   },
 
   createEvent(knex, newEvent) {
