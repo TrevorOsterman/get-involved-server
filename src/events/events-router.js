@@ -27,7 +27,9 @@ eventsRouter
       return res.status(400).send("Required fields missing");
     }
 
+    const eventid = uuid();
     const newEvent = {
+      eventid,
       title,
       description,
       event_date,
