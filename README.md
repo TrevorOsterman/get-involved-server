@@ -1,26 +1,43 @@
-# Express Boilerplate!
+# getInvolved
 
-This is a boilerplate project used for starting new projects!
+Live app: https://get-involved.now.sh
 
-## Set up
+## Summary
 
-Complete the following steps to start a new project (NEW-PROJECT-NAME):
+getInvolved is an organization platform for volunteer
+opportunities in your community. Our aim is to take the trouble out of
+trying to find how you can make a difference, and rather
+where you can take action immediately.
 
-1. Clone this repository to your local machine `git clone BOILERPLATE-URL NEW-PROJECTS-NAME`
-2. `cd` into the cloned repository
-3. Make a fresh start of the git history for this project with `rm -rf .git && git init`
-4. Install the node dependencies `npm install`
-5. Move the example Environment file to `.env` that will be ignored by git and read by the express server `mv example.env .env`
-6. Edit the contents of the `package.json` to use NEW-PROJECT-NAME instead of `"name": "express-boilerplate",`
+explore, post, search, organize, and share volunteer opportunities all
+from one central location with getInvolved.
 
-## Scripts
+![alt text]( "app screenshot")
 
-Start the application `npm start`
+## API
 
-Start nodemon for the application `npm run dev`
+Base API URL: https://rocky-depths-99123.herokuapp.com/api/
 
-Run the tests `npm test`
+getInvolved's API uses the base API and a couple endpoints to operate.
 
-## Deploying
+### /events
 
-When your new project is ready for deployment, add a new Heroku application with `heroku create`. This will make a new git remote called "heroku" and you can then `npm run deploy` which will push to this remote's master branch.
+#### Methods:
+
+GET: these requests will return a list of events in the database sorted by date ascending.
+
+POST: requests will need to include a json-formatted body which includes the required keys and values for "title", "event_date", "city", "state", and "description". The return response should be the new event added to the database along with it's unique id.
+
+### /events/:eventid
+
+#### Methods:
+
+GET: returns the event details of a specific event when unique event id is provided
+
+PATCH: updates the event details of a specific event. request body must only include key/value for updated field(s).
+
+DELETE: deletes specified event when supplied with unique ID
+
+## Technologies:
+
+The getInvolved client was created using React, with the server constructed using Node.js and Express. getInvolved's database was created using Postgres.
