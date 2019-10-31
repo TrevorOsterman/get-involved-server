@@ -3,6 +3,7 @@ const EventsService = {
     return knex
       .select("*")
       .from("events")
+      .where("event_date", ">=", new Date())
       .orderBy("event_date", "asc");
   },
 
