@@ -1,3 +1,4 @@
+const knex = require("knex");
 const EventsService = {
   getAllEvents(knex) {
     return knex
